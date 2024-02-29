@@ -1,3 +1,0 @@
-[pyworkflow.plugin]
-ddg = ddg
-
