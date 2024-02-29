@@ -120,7 +120,7 @@ def getDriver(browserData):
       else browserData['path']
 
   options._binary_location = browserPath
-  # options.add_argument('--headless')
+  options.add_argument('--headless')
   driver = driverObj(options=options)
   return driver
 

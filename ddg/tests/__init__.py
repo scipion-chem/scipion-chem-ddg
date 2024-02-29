@@ -24,4 +24,4 @@
 # *
 # **************************************************************************
 
-from ddg.tests.test_bepipred import *
+from ddg.tests.test_ddg_evaluation import *

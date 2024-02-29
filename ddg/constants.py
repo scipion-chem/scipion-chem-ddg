@@ -34,3 +34,8 @@ DDG_DIC = {'name': 'DDG',    'version': '3.0',
            'browser': 'BROWSER', 'browserPath': 'BROWSER_PATH'}
 
 EVAL_PARAM_MAP = {'ToxinPred': {'method': {'SVM (Swiss-Prot)': 1, 'SVM (Swiss-Prot) + Motif': 2, 'SVM (TrEMBL)': 3}}}
+
+EVALSUM = '''1) "Vaxijen2-1": {'software': 'Vaxijen2', 'vaxi2Target': 'bacteria'}
+2) "Vaxijen3-1": {'software': 'Vaxijen3'}
+3) "AllerTop2-1": {'software': 'AllerTop2'}
+4) "AllergenFP1-1": {'software': 'AllergenFP1'}'''
