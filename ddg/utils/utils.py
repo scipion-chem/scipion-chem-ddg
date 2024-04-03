@@ -27,6 +27,7 @@
 import time, requests
 from Bio import SeqIO
 
+from ..constants import EVAL_PARAM_MAP
 
 def parseInputProteins(faFile):
   '''Uses BioPython to parse a fasta file and return it as dictionary
@@ -50,7 +51,6 @@ def reportPoolStatus(poolDic):
       if po.ready() and evalSoft not in ready:
         ready.append(evalSoft)
         print(f'{evalSoft} execution finished ({len(ready)} / {len(poolDic)})')
-
 
 
 def divide_chunks(iter, chunkSize):
@@ -321,3 +321,13 @@ def parseAllerDDG(driver):
   for i in range(len(results)):
     resDic['Score'].append(0 if results[i] == 'PROBABLE NON-ALLERGEN' else 1)
   return resDic
+
+def mapEvalParamNames(sDic):
+  wsDic = {}
+  for sName, curSDic in sDic.items():
+    wsDic[sName] = {}
+    for paramName, paramValue in curSDic.items():
+      if paramName in EVAL_PARAM_MAP:
+        paramName = EVAL_PARAM_MAP[paramName]
+      wsDic[sName][paramName] = paramValue
+  return wsDic

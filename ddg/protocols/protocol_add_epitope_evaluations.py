@@ -30,7 +30,7 @@ from pyworkflow.protocol import params
 from pwchem.objects import SetOfSequenceROIs
 
 from .. import Plugin as ddgPlugin
-from ..constants import EVAL_PARAM_MAP
+from ..utils import mapEvalParamNames
 
 class ProtDDGEvaluations(EMProtocol):
   """Run evaluations on a set of epitopes (SetOfSequenceROIs)"""
@@ -49,6 +49,22 @@ class ProtDDGEvaluations(EMProtocol):
   def __init__(self, **kwargs):
     EMProtocol.__init__(self, **kwargs)
 
+  def _defineEvalParams(self, aGroup, allCond=True):
+    '''Define the evaluation options and the parameters for each of them.
+    allCond: condition to apply for all the parameters
+
+    WARNING: This function is used by a scipion-chem metaprotocol to use and define this parameters by its own,
+    modify with care
+    '''
+    aGroup.addParam('chooseDDGEvaluator', params.EnumParam, choices=self._evaluatorOptions,
+                    label='Choose evaluator: ', default=0, condition=f'{allCond}',
+                    help='Epitope evaluation software to use.')
+
+    aGroup.addParam('vaxi2Target', params.EnumParam, choices=self._vaxiTargets, default=0,
+                    label='Vaxijen2 target: ', condition=f'{allCond} and chooseDDGEvaluator==0',
+                    help='Target type for the Vaxijen2 epitopen evaluation')
+    return aGroup
+
   def _defineParams(self, form):
     form.addSection(label='Input')
     iGroup = form.addGroup('Input')
@@ -57,17 +73,10 @@ class ProtDDGEvaluations(EMProtocol):
 
     form.addSection(label='Add evaluations')
     aGroup = form.addGroup('Define evaluator')
-    aGroup.addParam('chooseEvaluator', params.EnumParam, choices=self._evaluatorOptions,
-                    label='Choose evaluator: ', default=0,
-                    help='Epitope evaluation software to use.')
-    aGroup.addParam('evaluatorName', params.StringParam, label='Evaluator name: ',
+    aGroup = self._defineEvalParams(aGroup)
+    aGroup.addParam('evaluatorDDGName', params.StringParam, label='Evaluator name: ',
                     default='', expertLevel=params.LEVEL_ADVANCED,
                     help='Set the name for the defined evaluator.')
-
-    aGroup.addParam('vaxi2Target', params.EnumParam, choices=self._vaxiTargets, default=0,
-                    label='Vaxijen2 target: ', condition='chooseEvaluator==0',
-                    help='Target type for the Vaxijen2 epitopen evaluation')
-
     aGroup.addParam('addEval', params.LabelParam, label='Add defined evaluator: ',
                     help='Add defined evaluator to perform the epitope prediction')
 
@@ -108,7 +117,7 @@ class ProtDDGEvaluations(EMProtocol):
     return seqs
 
   def buildElementDic(self):
-    sName, soft = self.evaluatorName.get(), self.getEnumText('chooseEvaluator')
+    sName, soft = self.evaluatorName.get(), self.getEnumText('chooseDDGEvaluator')
     if not sName.strip():
       sName = self.getDefSName(soft)
 
@@ -147,12 +156,6 @@ class ProtDDGEvaluations(EMProtocol):
     ''' Returns the selector dictionary with the parameter names expected by the web server
     :return: dic, {selName: {software: softName, paramName: paramValue}} with the webserver chosen parameters
     '''
-    wsDic = {}
     sDic = self.parseElementsDic()
-    for sName, curSDic in sDic.items():
-      wsDic[sName] = {}
-      for paramName, paramValue in curSDic.items():
-        if paramName in EVAL_PARAM_MAP:
-          paramName = EVAL_PARAM_MAP[paramName]
-        wsDic[sName][paramName] = paramValue
+    wsDic = mapEvalParamNames(sDic)
     return wsDic
