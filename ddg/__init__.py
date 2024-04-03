@@ -59,12 +59,12 @@ class Plugin(pwchemPlugin):
 
 	# ---------------------------------- Protocol functions-----------------------
 	@classmethod
-	def performEvaluations(cls, sequences, evalDics, jobs=1, browserData={}):
+	def performEvaluations(cls, sequences, evalDics, jobs=1, browserData={}, verbose=True):
 		'''Generalize caller to the evaluation functions.
-    - sequences: list of sequences
-    - evalDics: dictionary as {(evalKey, softwareName): {parameterName: parameterValue}}
+    - sequences: dict with sequences in the form: {seqId: sequence}
+    - evalDics: dictionary as {evalKey: {parameterName: parameterValue}}
     - jobs: int, number of jobs for parallelization
-    Returns a dictionary of the form: {(evalKey, softwareName): {'Score': [scoreValues], otherParam: [otherValues]}}
+    Returns a dictionary of the form: {(evalKey, softwareName): [scores]}
     '''
 		funcDic = {
 			'Vaxijen2': callVaxijen2, 'Vaxijen3': callVaxijen3, 'AllerTop2': callAllerTop2, 'AllergenFP1': callAllergenFP1
@@ -83,7 +83,8 @@ class Plugin(pwchemPlugin):
 				resultsDic[(evalKey, softName)] = pool.apply_async(funcDic[softName],
 																													 args=(sequences, smallEvalDic, browserData))
 
-		reportPoolStatus(resultsDic)
+		if verbose:
+			reportPoolStatus(resultsDic)
 
 		pool.close()
 		pool.join()

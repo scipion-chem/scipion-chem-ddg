@@ -24,49 +24,30 @@
 # *
 # **************************************************************************
 
-from pyworkflow.tests import setupTestProject, DataSet, BaseTest
-
-from pwem.protocols import ProtImportSequence
-
 from pwchem.utils import assertHandle
+from pwchem.tests import TestImportSeqROIs
 
-from ..protocols import ProtBepiPredPrediction
+from ..protocols import ProtDDGEvaluations
+from ..constants import EVALSUM
 
-class TestBepiPredPrediction(BaseTest):
+class TestDDGEvaluation(TestImportSeqROIs):
 	NAME = 'USER_SEQ'
 	DESCRIPTION = 'User description'
 	AMINOACIDSSEQ1 = 'MVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHG'
 
-	@classmethod
-	def setUpClass(cls):
-		super().setUpClass()
-		cls.ds = DataSet.getDataSet('model_building_tutorial')
-		setupTestProject(cls)
+	def _runDDGEvaluation(self, protROIs):
+		protEval = self.newProtocol(ProtDDGEvaluations,
+																inEvals=EVALSUM)
 
-		cls._runImportSeq()
-		cls._waitOutput(cls.protImportSeq, 'outputSequences', sleepTime=5)
+		protEval.inputROIs.set(protROIs)
+		protEval.inputROIs.setExtended('outputROIs_P0DTC2')
 
-	@classmethod
-	def _runImportSeq(cls):
-		kwargs = {'inputSequenceName': cls.NAME,
-							'inputSequenceDescription': cls.DESCRIPTION,
-							'inputRawSequence': cls.AMINOACIDSSEQ1
-							}
-
-		cls.protImportSeq = cls.newProtocol(
-			ProtImportSequence, **kwargs)
-		cls.proj.launchProtocol(cls.protImportSeq, wait=False)
-
-	def _runBepiPredPrediction(self):
-		protBepiPred = self.newProtocol(ProtBepiPredPrediction)
-
-		protBepiPred.inputSequence.set(self.protImportSeq)
-		protBepiPred.inputSequence.setExtended('outputSequence')
-
-		self.proj.launchProtocol(protBepiPred, wait=False)
-		return protBepiPred
+		self.proj.launchProtocol(protEval, wait=False)
+		return protEval
 
 	def test(self):
-		protBepiPred = self._runBepiPredPrediction()
-		self._waitOutput(protBepiPred, 'outputROIs', sleepTime=10)
-		assertHandle(self.assertIsNotNone, getattr(protBepiPred, 'outputROIs', None))
+		protImportSeqROIs = self._runImportSeqROIs()
+		self._waitOutput(protImportSeqROIs, 'outputROIs_P0DTC2', sleepTime=10)
+		protEval = self._runDDGEvaluation(protImportSeqROIs)
+		self._waitOutput(protEval, 'outputROIs', sleepTime=10)
+		assertHandle(self.assertIsNotNone, getattr(protEval, 'outputROIs', None))
