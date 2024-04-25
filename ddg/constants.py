@@ -31,7 +31,7 @@ DEFAULT_VERSION = '3.0'
 # Package dictionaries
 DDG_DIC = {'name': 'DDG',    'version': '3.0',
            'home': 'DDG_HOME', 'activation': 'DDG_ACTIVATION_CMD',
-           'browser': 'BROWSER', 'browserPath': 'BROWSER_PATH'}
+           'browser': 'DDG_BROWSER', 'browserPath': 'DDG_BROWSER_PATH'}
 
 EVAL_PARAM_MAP = {'ToxinPred': {'method': {'SVM (Swiss-Prot)': 1, 'SVM (Swiss-Prot) + Motif': 2, 'SVM (TrEMBL)': 3}}}
 

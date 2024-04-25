@@ -44,7 +44,16 @@ If you want the latest changes and developments, user devel branch.
             cd scipion-chem-ddg
             git checkout devel
 
-3. **Install**:
+3. **Define browser**
+
+This plugin uses web browser to access the software servers online.
+Therefore, you need to specify which browser to use and its location.
+Do so editing the scipion.conf file and add the variables:
+    - DDG_BROWSER = firefox/chrome/chromium  (defines the browser to use, that must already be installed in your computer)
+    - DDG_BROWSER_PATH = <path/to/browser>   (defines the location of the binary for the browser use)
+
+
+4. **Install**:
 
 .. code-block::
 
