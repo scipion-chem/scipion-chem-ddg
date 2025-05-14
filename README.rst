@@ -4,7 +4,7 @@ DDG scipion plugin
 
 **Documentation under development, sorry for the inconvenience**
 
-Scipion framework plugin for the use of tools provided by DDG (http://www.ddg-pharmfac.net/ddg/index.html).
+Scipion framework plugin for the use of tools provided by `DDG <http://www.ddg-pharmfac.net/ddg/index.html>`_.
 This plugin allows to use programs from the DDG software
 within the Scipion framework.
 
